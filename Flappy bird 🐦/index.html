@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        html,body {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            background: #eee;
+            overflow: hidden;
+            width: 360px;
+            height: 780px;
+            font-family: 'Comic Sans MS';
+        }
+        .container {
+            width: 360px;
+            height: 425px;
+            overflow: hidden;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            /*background: linear-gradient(lightblue 0% 90%,darkgreen 90% 100%)*/
+            background-image: url('./img/background.jpg');
+            background-attachment: bottom;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .bird {
+            background: url('./img/bird.png');
+            background-position: center;
+            background-size: 170%;
+            height: 40px;
+            width: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            transition: .3s ease;
+        }
+        .obstacles {
+            display: grid;
+            grid-template-columns: repeat(10,1fr);
+            gap: 50%;
+            position: absolute;
+            left: 210px;
+            width: 360px;
+            height: 100%;
+            transition: .3s ease;
+        }
+        .obstacle {
+            background: url('./img/obstacle.png');
+            background-position: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            height: 150px;
+            width: 70px;
+        }
+        .obstacle1,.obstacle2,.obstacle3 {
+            height: 100%;
+            display: grid;
+            gap: 29.5%;
+            position: relative;
+        }
+        .obstacle1 .obstacle:nth-child(1),.obstacle2 .obstacle:nth-child(1),.obstacle3 .obstacle:nth-child(1) {
+            transform: rotate(180deg);
+        }
+        .obstacle2 .obstacle:nth-child(1) {
+            height: 80px;
+        }
+        .obstacle2 .obstacle:nth-child(2) {
+            height: 220px;
+        }
+        .obstacle3 .obstacle:nth-child(1) {
+            height: 220px;
+        }
+        .obstacle3 .obstacle:nth-child(2) {
+            height: 80px;
+        }
+        .gameover-container {
+            width: 80%;
+            color: white;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateY(-50%) translateX(-50%);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            z-index: 3;
+            display: none;
+        }
+        .restart {
+            border: none;
+            padding: 10px;
+        }
+        h3 {
+            margin: 10px;
+        }
+        .instruction{
+            text-align: center;
+            margin-top: 600px;
+        }
+        
+    </style>
+</head>
+<body>
+    <h3>Score: <span class='score-container'>0</span></h3>
+    <div class='container'>
+        <div class='bird'></div>
+        <div class='obstacles'>
+            <div class='obstacle1'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+            <div class='obstacle2'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+            <div class='obstacle3'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+            <div class='obstacle1'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+            <div class='obstacle2'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+            <div class='obstacle3'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+
+            <div class='obstacle1'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+            <div class='obstacle2'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+            <div class='obstacle1'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+            <div class='obstacle2'>
+                <div class='obstacle'></div>
+                <div class='obstacle'></div>
+            </div>
+        </div>
+
+        <div class='gameover-container'>
+            <h2>Game Over</h2>
+            <h3>Score: <span class='score-container'>0</span></h3>
+            <button class='restart'>Restart</button>
+        </div>
+    </div>
+<p class='instruction'>click anywhere to play...</p>
+    <script>
+        const container = document.querySelector('.container');
+        const bird = document.querySelector('.bird');
+        const obstacleCon = document.querySelector('.obstacles');
+        const obstacles = document.querySelectorAll('.obstacle');
+        const gameOverCon = document.querySelector('.gameover-container');
+        const restartBtn = document.querySelector('.restart');
+        const scoreCon = document.querySelectorAll('.score-container');
+
+        let gravityIntervalId = null;
+        let moveObstaclesIntervalId = null;
+        let rearrangeObstaclesIntervalId = null;
+        let scoreIntervalId = null;
+
+        bird.style.left = '180px';
+        bird.style.top = '210px';
+        obstacleCon.style.left = '240px';
+
+        let isGameOver = false;
+        let score = 0;
+
+        const jump = ()=> {
+            let currentPosition = Number(bird.style.top.slice(0, -2));
+            bird.style.top = `${currentPosition-40}px`;
+bird.style.transform='rotate(-10deg)';
+  
+            setInterval(gameLoop, 50);
+        }
+
+        const gravity = ()=> {
+            let currentPosition = Number(bird.style.top.slice(0, -2));
+
+            bird.style.top = `${currentPosition+40}px`;
+
+bird.style.transform='rotate(20deg)';
+        }
+
+        const moveObstacles = ()=> {
+            let currentPosition = Number(obstacleCon.style.left.slice(0, -2));
+
+            obstacleCon.style.left = `${currentPosition-30}px`;
+        }
+
+        const rearrangeObstacles = ()=> {
+            obstacleCon.style.left = '160px';
+            obstacleCon.style.transition = 'none';
+            setTimeout(()=> {
+                obstacleCon.style.transition = '.5s ease';
+            }, 10);
+
+        }
+
+        const collisionDetection = ()=> {
+            if (!isGameOver) {
+                let birdRect = bird.getBoundingClientRect();
+                obstacles.forEach((obstacle)=> {
+                    let obstacleRect = obstacle.getBoundingClientRect()
+                    if (birdRect.x < obstacleRect.x + obstacleRect.width &&
+                        birdRect.x + birdRect.width > obstacleRect.x &&
+                        birdRect.y < obstacleRect.y + obstacleRect.height &&
+                        birdRect.y + birdRect.height > obstacleRect.y) {
+                        gameOver();
+                    }
+                })
+                let currentPosition = Number(bird.style.top.slice(0, -2));
+
+                if (currentPosition > 400) {
+                    gameOver()
+                }
+            }
+        }
+
+        const scoreIncrement = () => {
+            if (!isGameOver) {
+                score++;
+
+                scoreCon.forEach((sc) => {
+                    sc.textContent = score;
+                });
+            }
+        };
+
+        const gameOver = ()=> {
+            gameOverCon.style.display = 'flex';
+            bird.style.left = '180px';
+            bird.style.top = '190px';
+            obstacleCon.style.left = '240px';
+
+            clearInterval(gravityIntervalId);
+            clearInterval(moveObstaclesIntervalId);
+            clearInterval(rearrangeObstaclesIntervalId);
+            clearInterval(scoreIntervalId);
+
+            isGameOver = true;
+
+            document.body.removeEventListener('click',
+                jump);
+
+            scoreCon.forEach((sc)=> {
+                sc.textContent = score;
+            })
+        }
+
+        const restart = ()=> {
+            gameOverCon.style.display = 'none';
+            isGameOver = false;
+            score = 0;
+            gravityIntervalId = null;
+            moveObstaclesIntervalId = null;
+
+            rearrangeObstaclesIntervalId = null;
+            scoreIntervalId = null;
+            document.body.addEventListener('click',
+                jump);
+        }
+
+        const gameLoop = ()=> {
+            if (!gravityIntervalId) {
+                gravityIntervalId = setInterval(gravity, 500);
+            }
+
+            if (!moveObstaclesIntervalId) {
+                moveObstaclesIntervalId = setInterval(moveObstacles, 500);
+            }
+
+            if (!scoreIntervalId) {
+                scoreIntervalId = setInterval(scoreIncrement, 4000);
+            }
+            let obstaclePosition = Number(obstacleCon.style.left.slice(0, -2));
+            if (obstaclePosition<=-1830) {
+                rearrangeObstacles();
+            }
+
+            collisionDetection();
+        }
+
+        document.body.addEventListener('click', jump);
+        restartBtn.addEventListener('click', restart);
+
+    </script>
+</body>
+</html>

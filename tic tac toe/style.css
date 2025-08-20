@@ -1,0 +1,132 @@
+/* style.css */
+
+body {
+    background-color: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+  }
+  
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff;
+  }
+  
+  .scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+  }
+  
+  .scoreboard div {
+    padding: 10px 20px;
+    background-color: #0f3460;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: bold;
+  }
+  
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+  }
+  
+  .cell {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0f3460;
+    color: white;
+    font-size: 4rem;
+    cursor: pointer;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .cell:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  }
+  
+  .cell.X {
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff;
+  }
+  
+  .cell.O {
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+  }
+  
+  button.reset {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    background-color: #e94560;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+  
+  button.reset:hover {
+    background-color: #d32f45;
+    transform: scale(1.1);
+  }
+  
+  button.reset:active {
+    background-color: #c6283e;
+  }
+  /* Line to indicate the winning combination */
+.win-line {
+    position: absolute;
+    width: 0;
+    height: 5px;
+    background-color: #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+    border-radius: 2px;
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 0.5s ease-in-out;
+  }
+  .highlight {
+    background-color: #4caf50;
+    color: white;
+    animation: blink 0.5s ease-in-out infinite alternate;
+  }
+  
+  @keyframes blink {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.5;
+    }
+  }
+  .status-message {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 10px #00ffff;
+    text-align: center;
+  }
+  
