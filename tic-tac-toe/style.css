@@ -6,44 +6,49 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100svh;
     margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
     color: white;
-  }
-  
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
     color: #00ffff;
     text-shadow: 0 0 10px #00ffff;
-  }
-  
-  .scoreboard {
+}
+
+.scoreboard {
     display: flex;
     justify-content: center;
     gap: 20px;
     margin-bottom: 20px;
-    font-size: 1.5rem;
-  }
-  
-  .scoreboard div {
-    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+.scoreboard div {
+    padding: 15px;
     background-color: #0f3460;
     border-radius: 8px;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
     color: white;
-    font-weight: bold;
-  }
-  
-  .board {
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.board {
     display: grid;
     grid-template-columns: repeat(3, 100px);
     grid-template-rows: repeat(3, 100px);
     gap: 5px;
-  }
-  
-  .cell {
+}
+
+.cell {
     width: 100px;
     height: 100px;
     display: flex;
@@ -56,24 +61,24 @@ body {
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     border-radius: 8px;
     transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .cell:hover {
+}
+
+.cell:hover {
     transform: scale(1.1);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  }
-  
-  .cell.X {
+}
+
+.cell.X {
     color: #00ffff;
     text-shadow: 0 0 10px #00ffff;
-  }
-  
-  .cell.O {
+}
+
+.cell.O {
     color: #ff00ff;
     text-shadow: 0 0 10px #ff00ff;
-  }
-  
-  button.reset {
+}
+
+button.reset {
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 1.5rem;
@@ -85,17 +90,17 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-  }
-  
-  button.reset:hover {
+}
+
+button.reset:hover {
     background-color: #d32f45;
     transform: scale(1.1);
-  }
-  
-  button.reset:active {
+}
+
+button.reset:active {
     background-color: #c6283e;
-  }
-  /* Line to indicate the winning combination */
+}
+/* Line to indicate the winning combination */
 .win-line {
     position: absolute;
     width: 0;
@@ -106,27 +111,31 @@ body {
     transform-origin: left center;
     transform: scaleX(0);
     transition: transform 0.5s ease-in-out;
-  }
-  .highlight {
+}
+.highlight {
     background-color: #4caf50;
     color: white;
     animation: blink 0.5s ease-in-out infinite alternate;
-  }
-  
-  @keyframes blink {
+}
+
+@keyframes blink {
     from {
-      opacity: 1;
+        opacity: 1;
     }
     to {
-      opacity: 0.5;
+        opacity: 0.5;
     }
-  }
-  .status-message {
+}
+.status-message {
     margin-top: 20px;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
     color: #ffffff;
     text-shadow: 0 0 10px #00ffff;
     text-align: center;
-  }
-  
+}
+
+#on-off {
+    width: 40px;
+    accent-color: #00ffff;
+}

@@ -22,16 +22,16 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            /*background: linear-gradient(lightblue 0% 90%,darkgreen 90% 100%)*/
-            background-image: url('./img/background.jpg');
+            background-image: url('img/background.jpg');
             background-attachment: bottom;
             background-size: cover;
             background-repeat: no-repeat;
         }
         .bird {
-            background: url('./img/bird.png');
+            background: url('img/bird.png'), red;
             background-position: center;
             background-size: 170%;
+            border-radius: 30px;
             height: 40px;
             width: 50px;
             position: absolute;
@@ -52,7 +52,7 @@
             transition: .3s ease;
         }
         .obstacle {
-            background: url('./img/obstacle.png');
+            background: url('img/obstacle.png');
             background-position: center;
             background-size: 100% 100%;
             background-repeat: no-repeat;
@@ -103,11 +103,11 @@
         h3 {
             margin: 10px;
         }
-        .instruction{
+        .instruction {
             text-align: center;
             margin-top: 600px;
         }
-        
+
     </style>
 </head>
 <body>
@@ -164,7 +164,9 @@
             <button class='restart'>Restart</button>
         </div>
     </div>
-<p class='instruction'>click anywhere to play...</p>
+    <p class='instruction'>
+        click anywhere to play...
+    </p>
     <script>
         const container = document.querySelector('.container');
         const bird = document.querySelector('.bird');
@@ -189,8 +191,8 @@
         const jump = ()=> {
             let currentPosition = Number(bird.style.top.slice(0, -2));
             bird.style.top = `${currentPosition-40}px`;
-bird.style.transform='rotate(-10deg)';
-  
+            bird.style.transform = 'rotate(-10deg)';
+
             setInterval(gameLoop, 50);
         }
 
@@ -199,7 +201,7 @@ bird.style.transform='rotate(-10deg)';
 
             bird.style.top = `${currentPosition+40}px`;
 
-bird.style.transform='rotate(20deg)';
+            bird.style.transform = 'rotate(20deg)';
         }
 
         const moveObstacles = ()=> {
