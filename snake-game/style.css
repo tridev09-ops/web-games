@@ -1,97 +1,104 @@
 :root {
-        --blue: #007BFF;
-        --dark-bg: #0D1117;
-        --canvas-bg: #161B22;
-        --button-bg: #1F6FEB;
-        --button-hover: #3A8DFF;
-        --text-color: #E6EDF3;
-        --accent: #2EA043;
-    }
+    --blue: #007BFF;
+    --dark-bg: #0D1117;
+    --canvas-bg: #161B22;
+    --button-bg: #1F6FEB;
+    --button-hover: #3A8DFF;
+    --text-color: #E6EDF3;
+    --accent: #2EA043;
+}
 
-        body {
-            display: grid;
-            place-content: center;
-            background: var(--dark-bg);
-            color: var(--text-color);
-            user-select: none;
-            overflow: hidden;
-            max-height: 100svh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    display: grid;
+    place-content: center;
+    user-select: none;
+    position: fixed;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    background: var(--dark-bg);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-        canvas {
-            border: 2px solid #30363D;
-            background: var(--canvas-bg);
-        }
+canvas {
+    border: 2px solid #30363D;
+    background: var(--canvas-bg);
+}
 
-        .controls {
-            display: grid;
-            place-content: center;
-            margin: 20px;
-        }
+.controls {
+    display: grid;
+    place-content: center;
+    margin: -40px;
+}
 
-        .controls button {
-            padding: 18px;
-            font-size: 1.2rem;
-            max-width: 60%;
-            margin: 10px auto;
-            border: none;
-            border-radius: 10px;
-            background: var(--button-bg);
-            color: var(--text-color);
-            transition: background 0.2s ease;
-        }
+.controls button {
+    text-align: center;
+    padding: 15px;
+    font-size: 1.2rem;
+    height: 75px;
+    width: 80px;
+    margin: 10px auto;
+    border: none;
+    border-radius: 10px;
+    background: var(--button-bg);
+    color: var(--text-color);
+    transition: background 0.2s ease;
+}
 
-        .controls button:hover {
-            background: var(--button-hover);
-        }
+.controls button:hover {
+    background: var(--button-hover);
+}
 
-        .controls div button {
-            margin: 10px 20px;
-        }
+.controls div button {
+    margin: 0 20px;
+}
 
-        .game-over {
-            display: grid;
-            place-content: center;
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            backdrop-filter: blur(5px);
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid var(--accent);
-            padding: 15px;
-            border-radius: 10px;
-            width: 75%;
-            min-height: 175px;
-            display: none;
-            color: var(--text-color);
-        }
+.game-over {
+    display: grid;
+    place-content: center;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--accent);
+    padding: 15px;
+    border-radius: 10px;
+    width: 75%;
+    min-height: 175px;
+    display: none;
+    color: var(--text-color);
+}
 
-        .game-over * {
-            margin: 10px auto;
-        }
+.game-over * {
+    margin: 10px auto;
+}
 
-        .game-over a {
-            text-decoration: none;
-            background: var(--accent);
-            color: white;
-            padding: 10px;
-            font-size: 1rem;
-            border-radius: 5px;
-            transition: background 0.2s ease;
-        }
+.game-over a {
+    text-decoration: none;
+    background: var(--accent);
+    color: white;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
 
-        .game-over a:hover {
-            background: #238636;
-        }
+.game-over a:hover {
+    background: #238636;
+}
 
-        .scoreboard {
-            margin: 10px;
-            font-size: 1.1rem;
-            color: var(--text-color);
-        }
+.scoreboard {
+    margin: 10px;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
 
-        .scoreboard .score {
-            margin: 0 auto;
-        }
+.scoreboard .score {
+    margin: 0 auto;
+}
