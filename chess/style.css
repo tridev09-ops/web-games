@@ -1,6 +1,7 @@
 :root {
     --light-square: #E8EDF9;
     --dark-square: #B7C0D8;
+    --selected-square: #ffe440;
 }
 
 body {
@@ -37,4 +38,12 @@ body {
 
 .square.dark {
     background-color: var(--dark-square);
+}
+
+.square.selected {
+    background-color: var(--selected-square);
+}
+
+.square.valid-move {
+    background-color: var(--selected-square);
 }
