@@ -105,13 +105,17 @@ const highlightValidMoves = (row, col) => {
         const direction = piece === 'P' ? -1 : 1;
         // Highlight one square forward
         if (isValidMove(row, col, row + direction, col)) {
-            squares[`${row + direction}-${col}`].classList.add('valid-move');
+            const circle = document.createElement('div');
+            circle.className = 'valid-move-indicator';
+            squares[`${row + direction}-${col}`].appendChild(circle);
             validMoves.push([row + direction, col]);
         }
         // Highlight two squares forward from initial position
         if ((piece === 'P' && row === 6) || (piece === 'p' && row === 1)) {
             if (isValidMove(row, col, row + 2 * direction, col)) {
-                squares[`${row + 2 * direction}-${col}`].classList.add('valid-move');
+                const circle = document.createElement('div');
+                circle.className = 'valid-move-indicator';
+                squares[`${row + 2 * direction}-${col}`].appendChild(circle);
                 validMoves.push([row + 2 * direction, col]);
             }
         }
@@ -159,9 +163,12 @@ const removeSelection = (fromRow, fromCol) => {
     // Remove the selected class from the fromSquare
     fromSquare.classList.remove('selected');
 
-    // Remove the valid-move class from all squares
+    // Remove the valid-move-indicator circles from all squares
     validMoves.forEach(([r, c]) => {
-        squares[`${r}-${c}`].classList.remove('valid-move');
+        const indicator = squares[`${r}-${c}`].querySelector('.valid-move-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
     });
     validMoves.length = 0; // Clear the validMoves array
 }

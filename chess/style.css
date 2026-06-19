@@ -1,7 +1,7 @@
 :root {
     --light-square: #E8EDF9;
     --dark-square: #B7C0D8;
-    --selected-square: #ffe440;
+    --selected-square: hsla(60, 100%, 50%, 0.6);
 }
 
 body {
@@ -52,6 +52,10 @@ body {
     background-color: var(--selected-square);
 }
 
-.square.valid-move {
+.valid-move-indicator {
+    width: 16px;
+    height: 16px;
     background-color: var(--selected-square);
+    border-radius: 50%;
+    pointer-events: none;
 }
