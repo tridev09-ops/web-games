@@ -1,5 +1,7 @@
 // Create the chess board
 const board = document.querySelector('.board');
+const status = document.querySelector('.status');
+
 const squares = {};
 
 // Piece mapping
@@ -27,6 +29,8 @@ const gameBoard = [
 let currentPlayer = "black" // black / white
 let selectedPiece = null; // Store the selected piece's position as [row, col]
 const validMoves = []; // Store valid moves for the selected piece
+
+status.textContent = `It's ${currentPlayer}'s turn.`;
 
 const drawBoard = () => {
     for (let row = 0; row < 8; row++) {
@@ -121,6 +125,9 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
     }
     gameBoard[toRow][toCol] = gameBoard[fromRow][fromCol];
     gameBoard[fromRow][fromCol] = null;
+
+    console.log(`Moved piece from ${fromRow}, ${fromCol} to ${toRow}, ${toCol}`);
+
     // Update the board visually
     const fromSquare = squares[`${fromRow}-${fromCol}`];
     const toSquare = squares[`${toRow}-${toCol}`];
@@ -130,11 +137,33 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
     if (pieceImage) {
         toSquare.appendChild(pieceImage);
     }
+}
 
+const selectPiece = (row, col) => {
+    // Select piece logic here
+    const piece = getPieceAt(row, col);
+    if (piece) {
+        selectedPiece = [row, col];
+        const fromSquare = squares[`${row}-${col}`];
+
+        // Add a visual indication for the selected piece
+        fromSquare.classList.add('selected');
+        console.log(`Selected piece at: ${row}, ${col}`);
+
+        highlightValidMoves(row, col);
+    }
+}
+
+const removeSelection = (fromRow, fromCol) => {
+    const fromSquare = squares[`${fromRow}-${fromCol}`];
     // Remove the selected class from the fromSquare
     fromSquare.classList.remove('selected');
 
-
+    // Remove the valid-move class from all squares
+    validMoves.forEach(([r, c]) => {
+        squares[`${r}-${c}`].classList.remove('valid-move');
+    });
+    validMoves.length = 0; // Clear the validMoves array
 }
 
 board.addEventListener('click', (e) => {
@@ -144,35 +173,37 @@ board.addEventListener('click', (e) => {
     const row = parseInt(square.dataset.row);
     const col = parseInt(square.dataset.col);
 
+    let pieceColor = null;
+    if (gameBoard[row][col]) {
+        pieceColor = gameBoard[row][col] == gameBoard[row][col].toUpperCase() ? 'white' : 'black';
+    }
+
     if (selectedPiece) {
-        // Move piece logic here
         const [fromRow, fromCol] = selectedPiece;
-        movePiece(fromRow, fromCol, row, col);
 
-        const fromSquare = squares[`${row}-${col}`];
+        if (isValidMove(fromRow, fromCol, row, col)) {
+            movePiece(fromRow, fromCol, row, col);
+            selectedPiece = null; // Reset selection after move
+            removeSelection(fromRow, fromCol);
+            currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+            status.textContent = `It's ${currentPlayer}'s turn.`;
+        } else {
+            if (!gameBoard[row][col]) return; // Clicked on an empty square that is not a valid move, do nothing
 
-        // Remove the selected class from the fromSquare
-        fromSquare.classList.remove('selected');
-
-        selectedPiece = null; // Reset selection after move
-
-        // Remove the valid-move class from all squares
-        validMoves.forEach(([r, c]) => {
-            squares[`${r}-${c}`].classList.remove('valid-move');
-        });
-        validMoves.length = 0; // Clear the validMoves array
-    } else {
-        // Select piece logic here
-        const piece = getPieceAt(row, col);
-        if (piece) {
-            selectedPiece = [row, col];
-            const fromSquare = squares[`${row}-${col}`];
-
-            // Add a visual indication for the selected piece
-            fromSquare.classList.add('selected');
-            // console.log(`Selected piece at: ${row}, ${col}`);
-
-            highlightValidMoves(row, col);
+            if (pieceColor === currentPlayer) {
+                // selected a piece of the current player, so change selection
+                console.log(`Changing selection to piece at: ${row}, ${col}`);
+                removeSelection(fromRow, fromCol);
+                selectPiece(row, col);
+            }
         }
+    } else {
+        if (!gameBoard[row][col]) return; // Clicked on an empty square that is not a valid move, do nothing
+
+        if (pieceColor !== currentPlayer) {
+            console.log(`It's ${currentPlayer}'s turn. You cannot select ${pieceColor} pieces.`);
+            return;
+        }
+        selectPiece(row, col);
     }
 })
