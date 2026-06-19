@@ -17,7 +17,8 @@ const pieces = {
 // Initial board setup
 const gameBoard = [
     ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'], // Row 0 - Black back rank
-    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], // Row 1 - Black pawns
+    // ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], // Row 1 - Black pawns
+    [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
@@ -26,7 +27,7 @@ const gameBoard = [
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']  // Row 7 - White back rank
 ];
 
-let currentPlayer = "black" // black / white
+let currentPlayer = "black"; // black / white
 let selectedPiece = null; // Store the selected piece's position as [row, col]
 const validMoves = []; // Store valid moves for the selected piece
 
@@ -72,6 +73,155 @@ const getPieceAt = (row, col) => {
     return gameBoard[row][col];
 }
 
+const getPawnValidMoves = (row, col) => {
+    const piece = getPieceAt(row, col);
+    if (piece.toUpperCase() !== 'P') return [];
+
+    const direction = piece === 'P' ? -1 : 1;
+    const moves = [];
+
+    // One square forward
+    if (!getPieceAt(row + direction, col)) {
+        moves.push([row + direction, col]);
+    }
+
+    // Two squares forward from initial position
+    if ((piece === 'P' && row === 6) || (piece === 'p' && row === 1)) {
+        if (!getPieceAt(row + 2 * direction, col)) {
+            moves.push([row + 2 * direction, col]);
+        }
+    }
+
+    return moves;
+};
+
+const getValidRookMoves = (row, col) => {
+    const piece = getPieceAt(row, col);
+    if (piece.toUpperCase() !== 'R') return [];
+
+    const moves = [];
+    const direction = piece === 'R' ? -1 : 1;
+
+    // Check squares in the same row
+    for (let c = 0; c < 8; c++) {
+        if (c !== col && !getPieceAt(row, c)) {
+            moves.push([row, c]);
+        }
+    }
+
+    // Check squares in the same column
+    for (let r = 0; r < 8; r++) {
+        if (r !== row && !getPieceAt(r, col)) {
+            moves.push([r, col]);
+        }
+    }
+
+    return moves;
+};
+
+const getValidBishopMoves = (row, col) => {
+    const piece = getPieceAt(row, col);
+    if (piece.toUpperCase() !== 'B') return [];
+
+    const moves = [];
+    const directions = [
+        [-1, -1], // Up-Left
+        [-1, 1],  // Up-Right
+        [1, -1],  // Down-Left
+        [1, 1]    // Down-Right
+    ];
+
+    directions.forEach(([dr, dc]) => {
+        let r = row + dr;
+        let c = col + dc;
+        while (r >= 0 && r < 8 && c >= 0 && c < 8) {
+            if (!getPieceAt(r, c)) {
+                moves.push([r, c]);
+            } else {
+                break; // Stop if there's a piece in the way
+            }
+            r += dr;
+            c += dc;
+        }
+    });
+
+    return moves;
+};
+
+const getValidKingMoves = (row, col) => {
+    const piece = getPieceAt(row, col);
+    if (piece.toUpperCase() !== 'K') return [];
+
+    const moves = [];
+    const directions = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],           [0, 1],
+        [1, -1],  [1, 0],  [1, 1]
+    ];
+
+    directions.forEach(([dr, dc]) => {
+        const r = row + dr;
+        const c = col + dc;
+        if (r >= 0 && r < 8 && c >= 0 && c < 8 && !getPieceAt(r, c)) {
+            moves.push([r, c]);
+        }
+    });
+
+    return moves;
+};
+
+const getValidQueenMoves = (row, col) => {
+    const piece = getPieceAt(row, col);
+    if (piece.toUpperCase() !== 'Q') return [];
+
+    const moves = [];
+    // Queen moves like rook (horizontal/vertical) + bishop (diagonal)
+    const directions = [
+        [-1, 0], [1, 0], [0, -1], [0, 1],  // Horizontal and vertical (Rook)
+        [-1, -1], [-1, 1], [1, -1], [1, 1] // Diagonal (Bishop)
+    ];
+
+    directions.forEach(([dr, dc]) => {
+        let r = row + dr;
+        let c = col + dc;
+        while (r >= 0 && r < 8 && c >= 0 && c < 8) {
+            if (!getPieceAt(r, c)) {
+                moves.push([r, c]);
+            } else {
+                break;
+            }
+            r += dr;
+            c += dc;
+        }
+    });
+
+    return moves;
+};
+
+const getValidKnightMoves = (row, col) => {
+    const piece = getPieceAt(row, col);
+    if (piece.toUpperCase() !== 'N') return [];
+
+    const moves = [];
+    const knightMoves = [
+        [-2, -1], [-2, 1],
+        [-1, -2], [-1, 2],
+        [1, -2],  [1, 2],
+        [2, -1],  [2, 1]
+    ];
+
+    knightMoves.forEach(([dr, dc]) => {
+        const r = row + dr;
+        const c = col + dc;
+        if (r >= 0 && r < 8 && c >= 0 && c < 8 && !getPieceAt(r, c)) {
+            moves.push([r, c]);
+        }
+    });
+
+    return moves;
+}
+
+
 const isValidMove = (fromRow, fromCol, toRow, toCol) => {
     const piece = getPieceAt(fromRow, fromCol);
     if (!piece) return false; // No piece to move
@@ -79,47 +229,68 @@ const isValidMove = (fromRow, fromCol, toRow, toCol) => {
     if (fromRow === toRow && fromCol === toCol) return false; // Can't move to the same square
 
     if (piece.toUpperCase() === 'P') {
-        // Pawn move logic
-        const direction = piece === 'P' ? -1 : 1; // White pawns move up, black pawns move down
-        if (fromCol === toCol) {
-            // Move forward
-            if (toRow === fromRow + direction && !getPieceAt(toRow, toCol)) {
-                return true; // Move one square forward
-            }
-
-            // Initial two-square move
-            if ((piece === 'P' && fromRow === 6) || (piece === 'p' && fromRow === 1)) {
-                if (toRow === fromRow + 2 * direction && !getPieceAt(toRow, toCol) && !getPieceAt(fromRow + direction, toCol)) {
-                    return true; // Move two squares forward
-                }
-            }
-        }
+        const validPawnMoves = getPawnValidMoves(fromRow, fromCol);
+        return validPawnMoves.some(([r, c]) => r === toRow && c === toCol);
     }
-
+    if (piece.toUpperCase() === 'R') {
+        const validRookMoves = getValidRookMoves(fromRow, fromCol);
+        return validRookMoves.some(([r, c]) => r === toRow && c === toCol);
+    }
+    if (piece.toUpperCase() === 'B') {
+        const validBishopMoves = getValidBishopMoves(fromRow, fromCol);
+        return validBishopMoves.some(([r, c]) => r === toRow && c === toCol);
+    }
+    if (piece.toUpperCase() === 'K') {
+        const validKingMoves = getValidKingMoves(fromRow, fromCol);
+        return validKingMoves.some(([r, c]) => r === toRow && c === toCol);
+    }
+    if (piece.toUpperCase() === 'Q') {
+        const validQueenMoves = getValidQueenMoves(fromRow, fromCol);
+        return validQueenMoves.some(([r, c]) => r === toRow && c === toCol);
+    }
+    if (piece.toUpperCase() === 'N') {
+        const validKnightMoves = getValidKnightMoves(fromRow, fromCol);
+        return validKnightMoves.some(([r, c]) => r === toRow && c === toCol);
+    }
 };
 
 const highlightValidMoves = (row, col) => {
     const piece = getPieceAt(row, col);
     if (!piece) return;
+
     if (piece.toUpperCase() === 'P') {
-        const direction = piece === 'P' ? -1 : 1;
-        // Highlight one square forward
-        if (isValidMove(row, col, row + direction, col)) {
-            const circle = document.createElement('div');
-            circle.className = 'valid-move-indicator';
-            squares[`${row + direction}-${col}`].appendChild(circle);
-            validMoves.push([row + direction, col]);
-        }
-        // Highlight two squares forward from initial position
-        if ((piece === 'P' && row === 6) || (piece === 'p' && row === 1)) {
-            if (isValidMove(row, col, row + 2 * direction, col)) {
-                const circle = document.createElement('div');
-                circle.className = 'valid-move-indicator';
-                squares[`${row + 2 * direction}-${col}`].appendChild(circle);
-                validMoves.push([row + 2 * direction, col]);
-            }
-        }
+        const validPawnMoves = getPawnValidMoves(row, col);
+        drawValidMoveIndicators(validPawnMoves);
     }
+    if (piece.toUpperCase() === 'R') {
+        const validRookMoves = getValidRookMoves(row, col);
+        drawValidMoveIndicators(validRookMoves);
+    }
+    if (piece.toUpperCase() === 'B') {
+        const validBishopMoves = getValidBishopMoves(row, col);
+        drawValidMoveIndicators(validBishopMoves);
+    }
+    if (piece.toUpperCase() === 'K') {
+        const validKingMoves = getValidKingMoves(row, col);
+        drawValidMoveIndicators(validKingMoves);
+    }
+    if (piece.toUpperCase() === 'Q') {
+        const validQueenMoves = getValidQueenMoves(row, col);
+        drawValidMoveIndicators(validQueenMoves);
+    }
+    if (piece.toUpperCase() === 'N') {
+        const validKnightMoves = getValidKnightMoves(row, col);
+        drawValidMoveIndicators(validKnightMoves);
+    }
+}
+
+const drawValidMoveIndicators = (validPieceMoves) => {
+    validPieceMoves.forEach(([r, c]) => {
+        const circle = document.createElement('div');
+        circle.className = 'valid-move-indicator';
+        squares[`${r}-${c}`].appendChild(circle);
+        validMoves.push([r, c]);
+    });
 }
 
 const movePiece = (fromRow, fromCol, toRow, toCol) => {
@@ -129,8 +300,6 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
     }
     gameBoard[toRow][toCol] = gameBoard[fromRow][fromCol];
     gameBoard[fromRow][fromCol] = null;
-
-    console.log(`Moved piece from ${fromRow}, ${fromCol} to ${toRow}, ${toCol}`);
 
     // Update the board visually
     const fromSquare = squares[`${fromRow}-${fromCol}`];
@@ -152,7 +321,6 @@ const selectPiece = (row, col) => {
 
         // Add a visual indication for the selected piece
         fromSquare.classList.add('selected');
-        console.log(`Selected piece at: ${row}, ${col}`);
 
         highlightValidMoves(row, col);
     }
@@ -192,14 +360,14 @@ board.addEventListener('click', (e) => {
             movePiece(fromRow, fromCol, row, col);
             selectedPiece = null; // Reset selection after move
             removeSelection(fromRow, fromCol);
-            currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+
+            // currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
             status.textContent = `It's ${currentPlayer}'s turn.`;
         } else {
             if (!gameBoard[row][col]) return; // Clicked on an empty square that is not a valid move, do nothing
 
             if (pieceColor === currentPlayer) {
                 // selected a piece of the current player, so change selection
-                console.log(`Changing selection to piece at: ${row}, ${col}`);
                 removeSelection(fromRow, fromCol);
                 selectPiece(row, col);
             }
