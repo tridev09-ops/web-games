@@ -73,6 +73,12 @@ const getPieceAt = (row, col) => {
     return gameBoard[row][col];
 }
 
+const getPieceColor = (row, col) => {
+    const piece = getPieceAt(row, col);
+    if (!piece) return null;
+    return piece === piece.toUpperCase() ? 'white' : 'black';
+}
+
 const getPawnValidMoves = (row, col) => {
     const piece = getPieceAt(row, col);
     if (piece.toUpperCase() !== 'P') return [];
@@ -104,15 +110,23 @@ const getValidRookMoves = (row, col) => {
 
     // Check squares in the same row
     for (let c = 0; c < 8; c++) {
-        if (c !== col && !getPieceAt(row, c)) {
+        if (c !== col) {
             moves.push([row, c]);
+
+            if (getPieceAt(row, c)) {
+                break;
+            }
         }
     }
 
     // Check squares in the same column
     for (let r = 0; r < 8; r++) {
-        if (r !== row && !getPieceAt(r, col)) {
+        if (r !== row) {
             moves.push([r, col]);
+
+            if (getPieceAt(r, col)) {
+                break;
+            }
         }
     }
 
@@ -155,8 +169,8 @@ const getValidKingMoves = (row, col) => {
     const moves = [];
     const directions = [
         [-1, -1], [-1, 0], [-1, 1],
-        [0, -1],           [0, 1],
-        [1, -1],  [1, 0],  [1, 1]
+        [0, -1], [0, 1],
+        [1, -1], [1, 0], [1, 1]
     ];
 
     directions.forEach(([dr, dc]) => {
@@ -185,9 +199,10 @@ const getValidQueenMoves = (row, col) => {
         let r = row + dr;
         let c = col + dc;
         while (r >= 0 && r < 8 && c >= 0 && c < 8) {
-            if (!getPieceAt(r, c)) {
+            if (getPieceColor(r, c) !== getPieceColor(row, col)) {
                 moves.push([r, c]);
-            } else {
+            }
+            if (getPieceAt(r, c)) {
                 break;
             }
             r += dr;
@@ -206,8 +221,8 @@ const getValidKnightMoves = (row, col) => {
     const knightMoves = [
         [-2, -1], [-2, 1],
         [-1, -2], [-1, 2],
-        [1, -2],  [1, 2],
-        [2, -1],  [2, 1]
+        [1, -2], [1, 2],
+        [2, -1], [2, 1]
     ];
 
     knightMoves.forEach(([dr, dc]) => {
@@ -286,9 +301,14 @@ const highlightValidMoves = (row, col) => {
 
 const drawValidMoveIndicators = (validPieceMoves) => {
     validPieceMoves.forEach(([r, c]) => {
-        const circle = document.createElement('div');
-        circle.className = 'valid-move-indicator';
-        squares[`${r}-${c}`].appendChild(circle);
+        if (!getPieceAt(r, c)) {
+            const circle = document.createElement('div');
+            circle.className = 'valid-move-indicator';
+            squares[`${r}-${c}`].appendChild(circle);
+        } else {
+            const square = squares[`${r}-${c}`];
+            square.classList.add('valid-move-indicator-attack');
+        }
         validMoves.push([r, c]);
     });
 }
@@ -306,9 +326,14 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
     const toSquare = squares[`${toRow}-${toCol}`];
 
     // move the piece image from the fromSquare to the toSquare
-    const pieceImage = fromSquare.querySelector('img');
-    if (pieceImage) {
-        toSquare.appendChild(pieceImage);
+    const toPieceImage = toSquare.querySelector('img');
+    if (toPieceImage) {
+        toSquare.removeChild(toPieceImage);
+    }
+    // move the piece image from the fromSquare to the toSquare
+    const fromPieceImage = fromSquare.querySelector('img');
+    if (fromPieceImage) {
+        toSquare.appendChild(fromPieceImage);
     }
 }
 
@@ -326,13 +351,18 @@ const selectPiece = (row, col) => {
     }
 }
 
-const removeSelection = (fromRow, fromCol) => {
+const removeSelection = (fromRow, fromCol, toRow, toCol) => {
     const fromSquare = squares[`${fromRow}-${fromCol}`];
+    const toSquare = squares[`${toRow}-${toCol}`];
+
     // Remove the selected class from the fromSquare
     fromSquare.classList.remove('selected');
 
     // Remove the valid-move-indicator circles from all squares
     validMoves.forEach(([r, c]) => {
+        if (getPieceAt(r, c)) {
+            squares[`${r}-${c}`].classList.remove('valid-move-indicator-attack');
+        }
         const indicator = squares[`${r}-${c}`].querySelector('.valid-move-indicator');
         if (indicator) {
             indicator.remove();
@@ -350,7 +380,7 @@ board.addEventListener('click', (e) => {
 
     let pieceColor = null;
     if (gameBoard[row][col]) {
-        pieceColor = gameBoard[row][col] == gameBoard[row][col].toUpperCase() ? 'white' : 'black';
+        pieceColor = getPieceColor(row, col);
     }
 
     if (selectedPiece) {
@@ -359,7 +389,7 @@ board.addEventListener('click', (e) => {
         if (isValidMove(fromRow, fromCol, row, col)) {
             movePiece(fromRow, fromCol, row, col);
             selectedPiece = null; // Reset selection after move
-            removeSelection(fromRow, fromCol);
+            removeSelection(fromRow, fromCol, row, col);
 
             // currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
             status.textContent = `It's ${currentPlayer}'s turn.`;
@@ -368,7 +398,7 @@ board.addEventListener('click', (e) => {
 
             if (pieceColor === currentPlayer) {
                 // selected a piece of the current player, so change selection
-                removeSelection(fromRow, fromCol);
+                removeSelection(fromRow, fromCol, row, col);
                 selectPiece(row, col);
             }
         }
