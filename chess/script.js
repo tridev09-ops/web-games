@@ -17,13 +17,13 @@ const pieces = {
 // Initial board setup
 const gameBoard = [
     ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'], // Row 0 - Black back rank
-    // ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], // Row 1 - Black pawns
+    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], // Row 1 - Black pawns
+    // [null, null, null, null, null, null, null, null],
+    ['P', 'P', 'P', null, 'P', 'P', 'P', 'P'], // Row 6 - White pawns
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], // Row 6 - White pawns
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']  // Row 7 - White back rank
 ];
 
@@ -89,13 +89,21 @@ const getPawnValidMoves = (row, col) => {
     // One square forward
     if (!getPieceAt(row + direction, col)) {
         moves.push([row + direction, col]);
+
+        // Two squares forward from initial position
+        if ((piece === 'P' && row === 6) || (piece === 'p' && row === 1)) {
+            if (!getPieceAt(row + 2 * direction, col)) {
+                moves.push([row + 2 * direction, col]);
+            }
+        }
     }
 
-    // Two squares forward from initial position
-    if ((piece === 'P' && row === 6) || (piece === 'p' && row === 1)) {
-        if (!getPieceAt(row + 2 * direction, col)) {
-            moves.push([row + 2 * direction, col]);
-        }
+    // Pawn captures
+    if (getPieceAt(row + direction, col + direction)) {
+        moves.push([row+direction, col + direction]);
+    }
+    if (getPieceAt(row + direction, col - direction)) {
+        moves.push([row+direction, col - direction]);
     }
 
     return moves;
@@ -106,29 +114,26 @@ const getValidRookMoves = (row, col) => {
     if (piece.toUpperCase() !== 'R') return [];
 
     const moves = [];
-    const direction = piece === 'R' ? -1 : 1;
 
-    // Check squares in the same row
-    for (let c = 0; c < 8; c++) {
-        if (c !== col) {
-            moves.push([row, c]);
+    // Rook moves in straight line
+    const directions = [
+        [-1, 0], [1, 0], [0, -1], [0, 1],  // Horizontal and vertical (Rook)
+    ];
 
-            if (getPieceAt(row, c)) {
+    directions.forEach(([dr, dc]) => {
+        let r = row + dr;
+        let c = col + dc;
+        while (r >= 0 && r < 8 && c >= 0 && c < 8) {
+            if (getPieceColor(r, c) !== getPieceColor(row, col)) {
+                moves.push([r, c]);
+            }
+            if (getPieceAt(r, c)) {
                 break;
             }
+            r += dr;
+            c += dc;
         }
-    }
-
-    // Check squares in the same column
-    for (let r = 0; r < 8; r++) {
-        if (r !== row) {
-            moves.push([r, col]);
-
-            if (getPieceAt(r, col)) {
-                break;
-            }
-        }
-    }
+    });
 
     return moves;
 };
@@ -149,10 +154,11 @@ const getValidBishopMoves = (row, col) => {
         let r = row + dr;
         let c = col + dc;
         while (r >= 0 && r < 8 && c >= 0 && c < 8) {
-            if (!getPieceAt(r, c)) {
+            if (getPieceColor(r, c) !== getPieceColor(row, col)) {
                 moves.push([r, c]);
-            } else {
-                break; // Stop if there's a piece in the way
+            }
+            if (getPieceAt(r, c)) {
+                break;
             }
             r += dr;
             c += dc;
@@ -176,7 +182,7 @@ const getValidKingMoves = (row, col) => {
     directions.forEach(([dr, dc]) => {
         const r = row + dr;
         const c = col + dc;
-        if (r >= 0 && r < 8 && c >= 0 && c < 8 && !getPieceAt(r, c)) {
+        if (r >= 0 && r < 8 && c >= 0 && c < 8 && (getPieceColor(r, c) !== getPieceColor(row, col))) {
             moves.push([r, c]);
         }
     });
@@ -302,10 +308,12 @@ const highlightValidMoves = (row, col) => {
 const drawValidMoveIndicators = (validPieceMoves) => {
     validPieceMoves.forEach(([r, c]) => {
         if (!getPieceAt(r, c)) {
+            // Move
             const circle = document.createElement('div');
             circle.className = 'valid-move-indicator';
             squares[`${r}-${c}`].appendChild(circle);
         } else {
+            // Captures
             const square = squares[`${r}-${c}`];
             square.classList.add('valid-move-indicator-attack');
         }
