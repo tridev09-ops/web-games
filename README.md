@@ -25,14 +25,7 @@ The classic strategy game for two players. Get three in a row to win!
 - **Features**: Two-player gameplay, win detection
 - **Play**: [tic-tac-toe/index.html](tic-tac-toe/index.html)
 
-### 4. **Flappy Bird** 🐦
-A fun and challenging game inspired by the popular mobile game. Navigate through obstacles!
-- **Controls**: Click or spacebar to flap
-- **Goal**: Fly through the gaps without hitting pipes
-- **Features**: Score counter, difficulty increases with progression
-- **Play**: [flappy-bird/index.html](flappy-bird/index.html)
-
-### 5. **Chess** ♟️
+### 4. **Chess** ♟️
 Play against the computer or another player. A full chess implementation with piece movement rules.
 - **Controls**: Click pieces to select and move
 - **Goal**: Checkmate your opponent
