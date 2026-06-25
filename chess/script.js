@@ -18,12 +18,11 @@ const pieces = {
 const gameBoard = [
     ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'], // Row 0 - Black back rank
     ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], // Row 1 - Black pawns
-    // [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
     ['P', 'P', 'P', null, 'P', 'P', 'P', 'P'], // Row 6 - White pawns
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
     ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']  // Row 7 - White back rank
 ];
 
