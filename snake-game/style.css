@@ -1,11 +1,11 @@
 :root {
-    --blue: #007BFF;
-    --dark-bg: #232323;
-    --canvas-bg: #1d232b;
-    --button-bg: #1F6FEB;
-    --button-hover: #3A8DFF;
-    --text-color: #E6EDF3;
-    --accent: #2EA043;
+    --blue: #3b82f6;
+    --dark-bg: #0f172a;
+    --canvas-bg: #1e293b;
+    --button-bg: #2563eb;
+    --button-hover: #3b82f6;
+    --text-color: #f8fafc;
+    --accent: #22c55e;
 }
 
 @font-face {
@@ -13,123 +13,164 @@
     src: url('../comic-sans.ttf') format('truetype');
 }
 
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
 body {
-    height: 100%;
-    width: 100%;
-    display: grid;
-    place-content: center;
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     user-select: none;
-    background: var(--dark-bg);
+    background: linear-gradient(135deg, var(--dark-bg) 0%, #1e1b4b 100%);
     color: var(--text-color);
     font-family: "ComicSans", "Comic Neue", sans-serif;
-}
-
-.canvas-wrapper {
-    margin-block: auto;
-    position: relative;
-}
-
-canvas {
-    border: 2px solid #30363D;
-    background: var(--canvas-bg);
-}
-
-.controls {
-    display: grid;
-    place-content: center;
-}
-
-.controls button {
-    text-align: center;
-    padding: 15px;
-    font-size: 1.2rem;
-    height: 75px;
-    width: 80px;
-    margin: 10px auto;
-    border: none;
-    border-radius: 10px;
-    background: var(--button-bg);
-    color: var(--text-color);
-    transition: background 0.2s ease;
-    font-family: "ComicSans", "Comic Neue", sans-serif;
-}
-
-.controls button:hover {
-    background: var(--button-hover);
-}
-
-.controls div button {
-    margin: 0 20px;
-}
-
-.game-over {
-    display: grid;
-    place-content: center;
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    backdrop-filter: blur(5px);
-    background: rgba(200, 255, 200, 0.1);
-    border: 2px solid var(--accent);
-    padding: 15px;
-    border-radius: 10px;
-    width: 75%;
-    max-width: 360px;
-    min-height: 175px;
-    display: none;
-    color: var(--text-color);
-}
-
-.game-over * {
-    margin: 10px auto;
-}
-
-.game-over h2 {
-    color: #2EA043;
-}
-
-.game-over a {
-    text-decoration: none;
-    background: var(--accent);
-    color: white;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    transition: background 0.2s ease;
-}
-
-.game-over a:hover {
-    background: #238636;
+    padding: 20px;
 }
 
 .scoreboard {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px 4px;
-    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
     color: var(--text-color);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 .score {
-    margin: 0;
+    margin-left: 8px;
+    color: var(--accent);
 }
 
-/* tabs */
-@media (min-width:480px) {
-    canvas {
-        scale: 1.5;
-        margin: 100px;
+.canvas-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 360 / 400;
+    margin: 10px auto;
+    transition: max-width 0.3s ease;
+}
+
+canvas {
+    border: 3px solid #334155;
+    background: var(--canvas-bg);
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    display: block;
+}
+
+.game-over {
+    display: none; /* Changed to grid in JS */
+    place-content: center;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    background: rgba(15, 23, 42, 0.85);
+    border: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 10;
+    color: var(--text-color);
+}
+
+.game-over h2 {
+    color: var(--accent);
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+}
+
+.game-over .scoreboard {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.game-over a {
+    text-decoration: none;
+    background: linear-gradient(135deg, var(--accent) 0%, #15803d 100%);
+    color: white;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-block;
+}
+
+.game-over a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    width: 100%;
+    max-width: 360px;
+}
+
+.controls button {
+    text-align: center;
+    padding: 10px;
+    font-size: 1.2rem;
+    height: 60px;
+    width: 75px;
+    border: none;
+    border-radius: 12px;
+    background: var(--button-bg);
+    color: var(--text-color);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    cursor: pointer;
+    font-family: "ComicSans", "Comic Neue", sans-serif;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+}
+
+.controls button:active {
+    transform: scale(0.92);
+    box-shadow: 0 2px 5px rgba(37, 99, 235, 0.5);
+}
+
+.controls div {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 8px 0;
+}
+
+/* Responsive constraints to grow the canvas container nicely on tablet/desktop */
+@media (min-width: 480px) {
+    .canvas-wrapper {
+        max-width: 450px;
     }
 }
 
-/* pc */
-@media (min-width:780px) {
-    canvas {
-        scale: 2;
-        margin: 200px;
+@media (min-width: 780px) {
+    .canvas-wrapper {
+        max-width: 540px;
+    }
+}
+
+/* Hide touch controls on desktop screen sizes */
+@media (min-width: 769px) {
+    .controls {
+        display: none;
     }
 }

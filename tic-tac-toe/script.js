@@ -127,8 +127,8 @@ reset.addEventListener('click', () => {
     updateStatusMessage("Game reset! Player (X)'s turn.");
 });
 
-onOff.addEventListener('change', ()=> {
-    isComputerOn=!isComputerOn;
+onOff.addEventListener('change', () => {
+    isComputerOn = onOff.checked;
 })
 
 // Initial message
